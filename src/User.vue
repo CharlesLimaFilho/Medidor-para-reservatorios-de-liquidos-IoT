@@ -1,18 +1,22 @@
 <script setup>
-import UserImg from '@/assets/img/logo.png'
+import UserImg from '@/assets/img/userPadrao.png'
 import menubarIcon from '@/assets/img/menubarButton.png'
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from './store/auth';
 
 const menubar = ref(false);
 const countDevice = ref(1);
 const devices = ref([]);
+const user = ref(null);
 
+const router = useRouter();
+const authStore = useAuthStore();
 
-
-// must finish (i hope)
-const menubarAdapt = () => {
-    //if (window.screenX < )
-}
+const logout = () => {
+    authStore.logout();
+    router.push('/');
+};
 
 const menubarChange = () => {
     menubar.value = !menubar.value
@@ -26,7 +30,20 @@ const addDevice = () => {
 const removeDevice = (index) => {
     devices.value.splice(index, 1);
 }
+
+onMounted(() => {
+    const storedUser = localStorage.getItem('auth');
+    if (storedUser) {
+        user.value = JSON.parse(storedUser);
+        document.title = `Dispositivos de ${ authStore.user.name }`;
+    }
+})
+
+
+
 </script>
+
+
 
 
 <template>
@@ -39,7 +56,7 @@ const removeDevice = (index) => {
             </div>
             <div class="flex items-center justify-end h-16">
                 <div class=" pr-2">
-                    <span class="font-sans font-bold text-white ">User name</span>
+                    <span class="font-sans font-bold text-white" >Olá, {{ user?.name }}</span>
                 </div>
                 <div class=" h-auto">
                     <img :src="UserImg" alt="User" class="size-14 rounded-full">
@@ -47,20 +64,29 @@ const removeDevice = (index) => {
             </div>
         </div>
     </div>
-    <div class="absolute"> okla</div>
     <div class="flex flex-1">
         <div v-if="menubar" class="bg-cyan-700 w-28 h-screen">
-
+            <div class="flex flex-1 flex-col justify-between items-center h-screen">
+                <button class="flex bg-cyan-800 hover:bg-cyan-900 items-center justify-center w-full h-[40px] border-black border-y mt-4">
+                    Dispositivos
+                </button>
+                <button @click="logout" class="flex bg-cyan-800 hover:bg-cyan-900 items-center justify-center w-full h-[40px] border-black border-y mb-4">
+                    Logout
+                </button>
+            </div>
         </div>
         <div class="flex flex-col flex-1">
             <div v-for="(device, index) in devices" :key="device" class="h-16 mb-1 border-black border-2 rounded-lg flex items-center">
                 <div class=" flex flex-1 justify-between items-center">
                     <span>{{ device }}</span>
-                    <button @click="removeDevice(index)" class="bg-red-700 p-2 mr-2 rounded-lg hover:bg-red-800">Remove</button>
+                    <div>
+                        <button @click="" class="bg-gray-400 p-2 mr-2 rounded-lg hover:bg-gray-500">Detalhes</button>
+                        <button @click="removeDevice(index)" class="bg-red-700 p-2 mr-2 rounded-lg hover:bg-red-800">Remover</button>
+                    </div>
                 </div>
             </div>
             <div>
-                <button @click="addDevice" class="bg-cyan-800 w-max p-4 rounded-lg hover:bg-cyan-900">Add device</button>
+                <button @click="addDevice" class="bg-cyan-800 w-max p-4 rounded-lg hover:bg-cyan-900">Adicionar</button>
             </div>
         </div>
     </div>

@@ -1,22 +1,10 @@
 import './assets/main.css'
-
-import { createApp, ref } from 'vue'
-import { createRouter, createWebHistory } from "vue-router";
-
+import router from './router/router'
+import { createPinia } from 'pinia'
+import { createApp } from 'vue'
 import App from './App.vue'
-import User from '@/User.vue'
-import Login from '@/components/Loginarea.vue'
 
-const routes = [
-    {path: '/', name: 'Home', component: Login, meta: { title: 'Login'}},
-    {path: '/user/:id', name: 'user', component: User, meta: { title: 'Dispositivos'}},
-    //{path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound},
-]
-
-const router = createRouter({
-    history: createWebHistory(),
-    routes,
-})
-
-
-createApp(App).use(router).mount('#app')
+const app = createApp(App);
+app.use(createPinia());
+app.use(router);
+app.mount('#app');

@@ -3,11 +3,14 @@
 import { computed, ref } from 'vue';
 import logo from '@/assets/img/logo_reservatorio.jpg'
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/store/auth';
 
-const idA = 'admin'
-const passwordA = '1234'
+const idA = ''
+const passwordA = ''
 const incorrectInfo = ref(false)
 const router = useRouter();
+const authStore = useAuthStore();
+const errorMessage = ref('');
 
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -23,6 +26,16 @@ const verify = async () => {
     }
 }
 
+const handleLogin = () => {
+  if (authStore.login(id.value, password.value)) {
+    router.push(`user/${id.value}`);
+  } else {
+    incorrectInfo.value = true
+    delay(5000)
+    incorrectInfo.value = false
+  }
+};
+
 
 </script>
 
@@ -32,7 +45,7 @@ const verify = async () => {
             <div class="block items-center justify-center">
                 <img :src="logo" alt="logo" class="w-auto h-10 rounded m-auto pb-2" hidden>
                 <span class="flex justify-center items-center pb-8 text-2xl font-bold">Sign in</span>
-                <form @submit.prevent="verify">
+                <form>
                     <input type="text" name="id" id="id" v-model="id" placeholder="ID" class=" pl-1 bg-gray-300 text-black placeholder-black placeholder-opacity-30" required>
                     <br>
                     <div class=" py-2"></div>
@@ -40,7 +53,7 @@ const verify = async () => {
                     <br>
                     <div class=" py-2"></div>
                     <div class="flex justify-center">
-                        <button class=" text-white bg-gray-700 rounded-md hover:bg-black hover:text-white px-3 py-2" type="submit">Entrar</button>
+                        <button class=" text-white bg-gray-700 rounded-md hover:bg-black hover:text-white px-3 py-2" type="submit" @click="handleLogin">Entrar</button>
                     </div>
                 </form>
             </div>
