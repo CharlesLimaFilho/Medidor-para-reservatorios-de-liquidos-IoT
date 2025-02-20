@@ -4,13 +4,21 @@ import menubarIcon from '@/assets/img/menubarButton.png'
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from './store/auth';
-import newDevice from './components/newDevice.vue';
+/*
+function Device(name, id, reading) {
+    this.name = name;
+    this.idid = id;
+    this.reading = reading;
+}
+const count = rel(1);
+*/
 
 const menubar = ref(false);
 const adding = ref(false);
-const countDevice = ref(1);
+const detail = ref(false);
 const devices = ref([]);
 const user = ref(null);
+const deviceName = ref('');
 
 
 const router = useRouter();
@@ -29,10 +37,9 @@ const addingChange = () => {
     adding.value = !adding.value
 }
 
-const addDevice = () => {
-    addingChange();
-    
-    countDevice.value++
+const detailChange = () => {
+    detail.value = !detail.value
+    console.log(detail.value)
 }
 
 const removeDevice = (index) => {
@@ -40,7 +47,9 @@ const removeDevice = (index) => {
 }
 
 const sendData = () => {
+    //const x = new Device(deviceName.value, count.value,'100');
     devices.value.push(`Device ${deviceName.value}`);
+    deviceName.value = '';
     addingChange();
 }
 
@@ -77,7 +86,7 @@ onMounted(() => {
     </div>
     <div class="flex flex-1">
         <div v-if="menubar" class="bg-cyan-700 w-28 h-screen"> <!--Div da barra lateral-->
-            <div class="flex flex-1 flex-col justify-between items-center h-screen">
+            <div class="flex flex-1 flex-col items-center h-full">
                 <button class="flex bg-cyan-800 hover:bg-cyan-900 items-center justify-center w-full h-[40px] border-black border-y mt-4">
                     Dispositivos
                 </button>
@@ -86,12 +95,12 @@ onMounted(() => {
                 </button>
             </div>
         </div> <!--Div da barra lateral-->
-        <div class="flex flex-col flex-1" v-if="!adding"> <!--Div da area de devices-->
+        <div class="flex flex-col flex-1" v-if="!adding && !detail"> <!--Div da area de devices-->
             <div v-for="(device, index) in devices" :key="device" class="h-16 mb-1 border-black border-2 rounded-lg flex items-center">
                 <div class=" flex flex-1 justify-between items-center">
                     <span>{{ device }}</span>
                     <div>
-                        <button @click="" class="bg-gray-400 p-2 mr-2 rounded-lg hover:bg-gray-500">Detalhes</button>
+                        <button @click="detailChange" class="bg-gray-400 p-2 mr-2 rounded-lg hover:bg-gray-500">Detalhes</button>
                         <button @click="removeDevice(index)" class="bg-red-700 p-2 mr-2 rounded-lg hover:bg-red-800">Remover</button>
                     </div>
                 </div>
@@ -102,13 +111,29 @@ onMounted(() => {
         </div> <!--Div da area de devices-->
         <div v-if="adding" class="flex flex-1 w-full">
             <div class="h-screen w-full flex justify-center items-center">
-                <div class="rounded-lg bg-white w-[800px] h-[400px] flex flex-row items-center justify-center">
-                    <form>
+                <div class="rounded-lg bg-white w-[800px] h-[400px] flex flex-col items-center">
+                    <div class="flex w-full justify-end mt-4 mr-4">
+                        <button class="rounded px-4 py-[9px] hover:bg-gray-600" @click="addingChange">X</button>
+                    </div>
+                    <div class="flex flex-1 items-center">
                         <input type="text" v-model="deviceName" placeholder="Nome do dispositivo">
-                        <button @click="sendData" class="bg-cyan-800 w-max p-4 rounded-lg hover:bg-cyan-900">Confirmar</button>
-                    </form>
+                        <button @click="sendData" class="bg-cyan-800 p-4 rounded-lg hover:bg-cyan-900">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+        </div> <!--Div detalhes-->
+        <div v-if="detail" class="h-screen w-full flex justify-center items-center">
+            <div class="rounded-lg bg-white flex flex-1 h-full flex-col items-center">
+                <div class="flex w-full justify-end mt-4 mr-4">
+                    <button class="rounded px-4 py-[9px] hover:bg-gray-600" @click="detailChange">X</button>
+                </div>
+                <div>
+                    <div>
+                        <label for="name">Nome: </label>
+                        <span id="name"></span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div> <!--Fim-->
 </template>

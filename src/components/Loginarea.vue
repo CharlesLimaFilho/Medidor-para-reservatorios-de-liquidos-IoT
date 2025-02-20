@@ -15,24 +15,17 @@ const errorMessage = ref('');
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-const verify = async () => {
-    if (password.value === passwordA && id.value === idA) {
-        await delay(1000)
-        router.push({ path: `user/${idA}`})
-    } else {
-        incorrectInfo.value = true
-        await delay(5000)
-        incorrectInfo.value = false
-    }
-}
+
 
 const handleLogin = () => {
   if (authStore.login(id.value, password.value)) {
     router.push(`user/${id.value}`);
   } else {
+    window.history.replaceState(null, '', '/');
     incorrectInfo.value = true
-    delay(5000)
-    incorrectInfo.value = false
+    setTimeout(() => {
+        incorrectInfo.value = false;
+    }, 5000)
   }
 };
 
@@ -44,7 +37,7 @@ const handleLogin = () => {
         <div class="flex bg-white h-96 w-96 items-center justify-center flex-col">
             <div class="block items-center justify-center">
                 <img :src="logo" alt="logo" class="w-auto h-10 rounded m-auto pb-2" hidden>
-                <span class="flex justify-center items-center pb-8 text-2xl font-bold">Sign in</span>
+                <span class="flex justify-center items-center pb-8 text-2xl font-bold">Faça o login</span>
                 <form>
                     <input type="text" name="id" id="id" v-model="id" placeholder="ID" class=" pl-1 bg-gray-300 text-black placeholder-black placeholder-opacity-30" required>
                     <br>
